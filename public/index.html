@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Phàm Nhân Tu Tiên</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- Màn hình đăng nhập -->
+<div id="login">
+  <div class="login-box">
+    <h1>🌿 PHÀM NHÂN TU TIÊN</h1>
+    <p class="story">Nơi thôn quê hẻo lánh, một thiếu niên phàm nhân nhặt được chiếc bình nhỏ thần bí. Từ đó, cánh cửa tu tiên hé mở trước mắt kẻ phàm trần. Hãy cùng hắn bước lên con đường trường sinh — từ phàm nhân vô danh đến chân tiên ngạo thị thiên hạ.</p>
+    <p class="sub">Chọn con đường của bạn</p>
+    <input id="name-input" maxlength="16" placeholder="Nhập đạo hiệu của bạn...">
+    <div id="gender-select">
+      <button id="gender-nam" class="gender-btn selected">🤴 Nam</button>
+      <button id="gender-nu" class="gender-btn">👸 Nữ</button>
+    </div>
+    <div id="class-select">
+      <button class="class-btn selected" data-class="kiem-tu">
+        <div class="cl-ic">🗡️</div><div class="cl-name">Kiếm Tu</div>
+        <div class="cl-desc">Cận chiến · dame to</div>
+      </button>
+      <button class="class-btn" data-class="phu-tu">
+        <div class="cl-ic">🧧</div><div class="cl-name">Phù Tu</div>
+        <div class="cl-desc">Đánh xa · phép thuật</div>
+      </button>
+      <button class="class-btn" data-class="khoi-loi">
+        <div class="cl-ic">🗿</div><div class="cl-name">Khôi Lỗi Sư</div>
+        <div class="cl-desc">Khống chế · khôi lỗi</div>
+      </button>
+    </div>
+    <button id="join-btn">Vào game farm quái</button>
+  </div>
+</div>
+
+<!-- Game -->
+<div id="game" class="hidden">
+  <canvas id="cv"></canvas>
+  <!-- HUD gọn -->
+  <div id="hud">
+    <div class="bars">
+      <div class="bar hp"><div id="hp-fill"></div><span id="hp-text"></span></div>
+      <div class="bar mp"><div id="mp-fill"></div><span id="mp-text"></span></div>
+      <div class="bar tv"><div id="tv-fill"></div><span id="tv-text"></span></div>
+    </div>
+    <div id="stat-line"><span id="lvl-text"></span> · <span id="lt-text"></span> · <span id="pot-text"></span></div>
+    <div id="dan-line" style="font-size:11px;color:#9fe8b0"></div>
+  </div>
+  <div id="skillbar"></div>
+  <button id="autobtn" title="Tự động đánh quái (T)">Auto</button>
+  <canvas id="minimap" width="110" height="82"></canvas>
+  <!-- Tên map hiện tại -->
+  <div id="mapname">🗺️ Thất Huyền Môn</div>
+  <!-- Thanh máu boss -->
+  <div id="bossbar" style="display:none">
+    <div id="boss-name">🐗 Thiết Bì Dã Trư</div>
+    <div class="boss-hpbar"><div id="boss-fill"></div><span id="boss-hptext"></span></div>
+  </div>
+  <!-- Tracker nhiệm vụ -->
+  <div id="quest-tracker" style="display:none">
+    <div id="qt-name"></div><div id="qt-obj"></div>
+  </div>
+  <div id="mutebtn">🔊</div>
+  <!-- Nút menu UI -->
+  <div id="menubtns">
+    <button data-p="panel-char" title="Nhân vật (C)">👤</button>
+    <button data-p="panel-bag" title="Túi đồ (B)">🎒</button>
+    <button data-p="panel-quest" title="Nhiệm vụ (Q)">📜</button>
+    <button data-p="panel-map" title="Bản đồ (M)">🗺️</button>
+    <button id="chatbtn" title="Chat (Enter)">💬</button>
+    <button data-p="panel-settings" title="Cài đặt (Esc)">⚙️</button>
+  </div>
+  <!-- Panel nhân vật -->
+  <div id="panel-char" class="panel">
+    <div class="p-head">👤 Nhân vật <span class="p-x" data-x>✕</span></div>
+    <div class="p-body" id="char-body"></div>
+  </div>
+  <!-- Panel túi đồ -->
+  <div id="panel-bag" class="panel">
+    <div class="p-head">🎒 Túi đồ <span class="p-x" data-x>✕</span></div>
+    <div class="p-body" id="bag-body"></div>
+  </div>
+  <!-- Panel bản đồ lớn -->
+  <div id="panel-map" class="panel">
+    <div class="p-head">🗺️ <span id="panel-map-name">Thất Huyền Môn</span> <span class="p-x" data-x>✕</span></div>
+    <div class="p-body"><canvas id="bigmap" width="330" height="248"></canvas></div>
+  </div>
+  <!-- Panel nhiệm vụ -->
+  <div id="panel-quest" class="panel">
+    <div class="p-head">📜 Nhiệm vụ <span class="p-x" data-x>✕</span></div>
+    <div class="p-body" id="quest-body"></div>
+  </div>
+  <!-- Panel thoại NPC -->
+  <div id="panel-dlg" class="panel">
+    <div class="p-head">💬 <span id="dlg-name"></span> <span class="p-x" data-x>✕</span></div>
+    <div class="p-body">
+      <div id="dlg-top"><img id="dlg-img" alt="NPC"><div id="dlg-lines"></div></div>
+      <div id="dlg-btns"></div>
+    </div>
+  </div>
+  <!-- Panel chọn Đường (P3) -->
+  <div id="panel-hall" class="panel">
+    <div class="p-head">🏛️ Gia nhập Đường <span class="p-x" data-x>✕</span></div>
+    <div class="p-body" id="hall-body"></div>
+  </div>
+  <!-- Panel cài đặt -->
+  <div id="panel-settings" class="panel">
+    <div class="p-head">⚙️ Cài đặt <span class="p-x" data-x>✕</span></div>
+    <div class="p-body" id="settings-body"></div>
+  </div>
+  <!-- Chat thế giới -->
+  <div id="chatlog"></div>
+  <div id="chatinput-wrap" style="display:none"><input id="chatinput" maxlength="80" placeholder="Nhắn kênh thế giới..."></div>
+  <div id="sysmsg"></div>
+  <div id="dead-overlay" style="display:none"><div>💀 Đã ngã xuống...<br><span>Hồi sinh sau <b id="dead-count">5</b>s</span></div></div>
+  <div id="hint">Chạm: di chuyển · Chạm quái/NPC: tương tác · Chạm cổng 🌀: chuyển map · N: nhiệm vụ · T: auto</div>
+</div>
+
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
